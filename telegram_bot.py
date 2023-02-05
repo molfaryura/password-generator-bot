@@ -53,5 +53,21 @@ def start(message):
     bot.send_message(message.chat.id, start_text,
                      parse_mode='html')
     
+
+@bot.message_handler(commands=['start'])
+def ask(message):
+    pass_message = (
+        'This password will contain at least'
+        'one uppercase letter, '
+        'a lower case letter, '
+        'a number, and a special symbol.\n\n'
+        'Please type the length of the password you want(from 4 to 40)'
+    )
+    ask_user = bot.send_message(message.chat.id, pass_message)
+    bot.register_next_step_handler(ask_user, password_foo)
+
+# On the next step the 'password_foo' function should be created! 
+
+
 if __name__ == '__main__':
     bot.polling(non_stop=True)
