@@ -54,7 +54,7 @@ def start(message):
                      parse_mode='html')
     
 
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['password'])
 def ask(message):
     pass_message = (
         'This password will contain at least'
@@ -66,8 +66,26 @@ def ask(message):
     ask_user = bot.send_message(message.chat.id, pass_message)
     bot.register_next_step_handler(ask_user, password_foo)
 
-# On the next step the 'password_foo' function should be created! 
+def password_foo(message):
+    if message.text == '/password':
+        ask(message)
+    elif message.text == '/start':
+        start(message)
+    else:
+        if message.text.isdigit():
+            message.text = int(message.text)
+            if message.text >=4 and message.text <=40:
+                while True:
+                    password = gen_pass(symbols, message.text)
+                    if is_password_valid(string_pass=password) is not None:
+                        bot.send_message(message.chat.id, password)
+                        break
+            else:
+                bot.send_message(message.chat.id, "ERROR", parse_mode='html')
+        else:
+           bot.send_message(message.chat.id, "ERROR", parse_mode='html') 
 
+# Create error messages in the next commits!
 
 if __name__ == '__main__':
     bot.polling(non_stop=True)
