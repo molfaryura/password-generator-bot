@@ -40,6 +40,9 @@ token = os.environ.get('BOT_TOKEN')
 
 bot = telebot.TeleBot(token=token)
 
+error_len = '<b>Error!</b> The length of a password should be only between 4 and 40'
+
+error_num = '<b>Your input is incorrect!</b> Please type a number and restart.'
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -57,7 +60,7 @@ def start(message):
 @bot.message_handler(commands=['password'])
 def ask(message):
     pass_message = (
-        'This password will contain at least'
+        'This password will contain at least '
         'one uppercase letter, '
         'a lower case letter, '
         'a number, and a special symbol.\n\n'
@@ -81,11 +84,9 @@ def password_foo(message):
                         bot.send_message(message.chat.id, password)
                         break
             else:
-                bot.send_message(message.chat.id, "ERROR", parse_mode='html')
+                bot.send_message(message.chat.id, error_len, parse_mode='html')
         else:
-           bot.send_message(message.chat.id, "ERROR", parse_mode='html') 
-
-# Create error messages in the next commits!
+           bot.send_message(message.chat.id, error_num, parse_mode='html') 
 
 if __name__ == '__main__':
     bot.polling(non_stop=True)
