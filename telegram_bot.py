@@ -86,7 +86,15 @@ def password_foo(message):
             else:
                 bot.send_message(message.chat.id, error_len, parse_mode='html')
         else:
-           bot.send_message(message.chat.id, error_num, parse_mode='html') 
+           bot.send_message(message.chat.id, error_num, parse_mode='html')
+
+@bot.message_handler()
+def help(message):
+    '''If user types something
+        different than existing commands,
+        the info message will be displayed
+    '''
+    bot.send_message(message.chat.id, 'Please choose between existing commands!')
 
 if __name__ == '__main__':
     bot.polling(non_stop=True)
