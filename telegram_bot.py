@@ -26,13 +26,13 @@ def is_password_valid(string_pass):
     '''Verify that password contains
         at leats one uppercase letter,
         lowercase letter, number, and
-        a special symbold
+        a special symbol
     '''
     reg_ex = r'^(?=.*?\d)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[^A-Za-z\s0-9])'
     return re.search(pattern=reg_ex, string=string_pass) is not None
 
 # characters from which the password will be generated
-symbols = string.printable[:-15]
+SYMBOLS = string.printable[:-15]
 
 load_dotenv()
 
@@ -40,9 +40,9 @@ token = os.environ.get('BOT_TOKEN')
 
 bot = telebot.TeleBot(token=token)
 
-error_len = '<b>Error!</b> The length of a password should be only between 4 and 40'
+ERROR_LEN = '<b>Error!</b> The length of a password should be only between 4 and 40'
 
-error_num = '<b>Your input is incorrect!</b> Please type a number and restart.'
+ERROR_NUM = '<b>Your input is incorrect!</b> Please type a number and restart.'
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -55,7 +55,7 @@ def start(message):
     )
     bot.send_message(message.chat.id, start_text,
                      parse_mode='html')
-    
+
 
 @bot.message_handler(commands=['password'])
 def ask(message):
@@ -79,17 +79,17 @@ def password_foo(message):
             message.text = int(message.text)
             if message.text >=4 and message.text <=40:
                 while True:
-                    password = gen_pass(symbols, message.text)
+                    password = gen_pass(SYMBOLS, message.text)
                     if is_password_valid(string_pass=password) is not None:
                         bot.send_message(message.chat.id, password)
                         break
             else:
-                bot.send_message(message.chat.id, error_len, parse_mode='html')
+                bot.send_message(message.chat.id, ERROR_LEN, parse_mode='html')
         else:
-           bot.send_message(message.chat.id, error_num, parse_mode='html')
+            bot.send_message(message.chat.id, ERROR_NUM, parse_mode='html')
 
 @bot.message_handler()
-def help(message):
+def help_message(message):
     '''If user types something
         different than existing commands,
         the info message will be displayed
