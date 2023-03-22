@@ -1,6 +1,4 @@
-'''Telegram bot, which
-    generate secure passwords
-'''
+"""Telegram bot which generate secure passwords"""
 
 import os
 
@@ -15,24 +13,35 @@ import telebot
 from dotenv import load_dotenv
 
 def gen_pass(chars, length):
-    '''Return randomly generated string
-       of certain length
-    '''
+    """ Generates a random string of the specified length using the characters provided.
+
+    Args:
+        chars (str,list,tuple): An iterable obj of characters to be used to generate the password.
+        length (int): The desired length of the password.
+
+    Returns:
+        str: A randomly generated string of the specified length.
+    """
+
     chars_tup = (secrets.choice(chars) for _ in range(length))
     return "".join(chars_tup)
 
 
 def is_password_valid(string_pass):
-    '''Verify that password contains
-        at leats one uppercase letter,
-        lowercase letter, number, and
-        a special symbol
-    '''
+    """Verifies that password contains at leats one uppercase letter, lowercase letter, number,
+    and a special symbol.
+
+    Args:
+        string_pass(str): randomly generated string to check.
+
+    Returns:
+        bool: True if password is valid, False otherwise.
+    """
+
     reg_ex = r'^(?=.*?\d)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[^A-Za-z\s0-9])'
     return re.search(pattern=reg_ex, string=string_pass) is not None
 
-# characters from which the password will be generated
-SYMBOLS = string.printable[:-15]
+SYMBOLS = string.printable[:-15] # characters from which the password will be generated
 
 load_dotenv()
 
@@ -46,6 +55,8 @@ ERROR_NUM = '<b>Your input is incorrect!</b> Please type a number and restart.'
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    """Shows description and existing commands for the user"""
+
     start_text = (
         f'Hello <b>{message.from_user.first_name}</b>,\n'
         'Welcome to the Password Generator Bot!\n'
@@ -59,6 +70,8 @@ def start(message):
 
 @bot.message_handler(commands=['password'])
 def ask(message):
+    """Shows to the user description of the future password, and save the user input"""
+
     pass_message = (
         'This password will contain at least '
         'one uppercase letter, '
@@ -70,6 +83,8 @@ def ask(message):
     bot.register_next_step_handler(ask_user, password_foo)
 
 def password_foo(message):
+    """Shows generated password for the user if requirements are met"""
+
     if message.text == '/password':
         ask(message)
     elif message.text == '/start':
@@ -90,10 +105,8 @@ def password_foo(message):
 
 @bot.message_handler()
 def help_message(message):
-    '''If user types something
-        different than existing commands,
-        the info message will be displayed
-    '''
+    """Shows the info message is the user types non existing command"""
+
     bot.send_message(message.chat.id, 'Please choose between existing commands!')
 
 if __name__ == '__main__':
