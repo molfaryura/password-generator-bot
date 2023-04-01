@@ -110,4 +110,5 @@ def help_message(message):
     bot.send_message(message.chat.id, 'Please choose between existing commands!')
 
 if __name__ == '__main__':
+    bot.delete_webhook()
     bot.polling(non_stop=True)
