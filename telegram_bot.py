@@ -51,7 +51,7 @@ bot = telebot.TeleBot(token=token)
 
 ERROR_LEN = '<b>Error!</b> The length of a password should be only between 4 and 40'
 
-ERROR_NUM = '<b>Your input is incorrect!</b> Please type a number and restart.'
+ERROR_NUM = '<b>Your input is incorrect!</b> Please type a number.'
 
 @bot.message_handler(commands=['start'])
 def start(message):
