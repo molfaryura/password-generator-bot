@@ -1,7 +1,7 @@
 # Password Generator Telegram Bot  <img src="img/icon.png" align="right"/>
 
 ## Brief description
-- This simple bot was created using Python and it's modules: pyTelegramBotAPI, re
+- This simple bot was created using Python and it's modules: pyTelegramBotAPI, Flask, re
 - Bot creates a password with at least one uppercase letter, one lowercase letter, number, and a special symbol using regular expressions.
 - You can find this bot here https://t.me/secure_password_bot.
 
