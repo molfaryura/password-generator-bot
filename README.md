@@ -3,6 +3,7 @@
 ## Brief description
 - This simple bot was created using Python and it's modules: pyTelegramBotAPI, Flask, re
 - Bot creates a password with at least one uppercase letter, one lowercase letter, number, and a special symbol using regular expressions.
+- Python code is deployed on https://www.pythonanywhere.com/
 - You can find this bot here https://t.me/secure_password_bot.
 
 ## Example
