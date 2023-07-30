@@ -12,6 +12,9 @@ import telebot
 
 from dotenv import load_dotenv
 
+from flask import Flask, request, abort, Response
+
+
 def gen_pass(chars, length):
     """ Generates a random string of the specified length using the characters provided.
 
@@ -41,17 +44,52 @@ def is_password_valid(string_pass):
     reg_ex = r'^(?=.*?\d)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[^A-Za-z\s0-9])'
     return re.search(pattern=reg_ex, string=string_pass) is not None
 
-SYMBOLS = string.printable[:-15] # characters from which the password will be generated
+
+# characters from which the password will be generated
+SYMBOLS = string.printable[:-15]
 
 load_dotenv()
 
-token = os.environ.get('BOT_TOKEN')
+TOKEN = os.environ.get('BOT_TOKEN')
+URL = os.environ.get('URL')
 
-bot = telebot.TeleBot(token=token)
+bot = telebot.TeleBot(TOKEN, threaded=False)
+
+app = Flask(__name__)
+
+
+@app.route('/'+TOKEN, methods=['POST', 'GET'])
+def index():
+    """ Handles the webhook requests from Telegram.
+
+    If the request is a POST, the function will decode the JSON payload and pass it
+    to the `bot.process_new_updates` method.
+    If the request is a GET request, the function will return an empty string.
+
+    Args:
+        request: The Flask request object.
+
+    Returns:
+        str: An empty string if the request is a GET request, or the result of
+        the `bot.process_new_updates` method if the request is a POST request.
+    """
+
+    if request.headers.get('content-type') == 'application/json':
+        update = telebot.types.Update.de_json(
+            request.stream.read().decode('utf-8'))
+        bot.process_new_updates([update])
+        return ''
+    abort(403)
+
+    if request.method == 'POST':
+        return Response('ok', status=200)
+    return ''
+
 
 ERROR_LEN = '<b>Error!</b> The length of a password should be only between 4 and 40'
 
 ERROR_NUM = '<b>Your input is incorrect!</b> Please type a number.'
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -82,6 +120,7 @@ def ask(message):
     ask_user = bot.send_message(message.chat.id, pass_message)
     bot.register_next_step_handler(ask_user, password_foo)
 
+
 def password_foo(message):
     """Shows generated password for the user if requirements are met"""
 
@@ -92,7 +131,7 @@ def password_foo(message):
     else:
         if message.text.isdigit():
             message.text = int(message.text)
-            if message.text >=4 and message.text <=40:
+            if message.text >= 4 and message.text <= 40:
                 while True:
                     password = gen_pass(SYMBOLS, message.text)
                     if is_password_valid(string_pass=password) is not None:
@@ -103,12 +142,16 @@ def password_foo(message):
         else:
             bot.send_message(message.chat.id, ERROR_NUM, parse_mode='html')
 
+
 @bot.message_handler()
 def help_message(message):
     """Shows the info message is the user types non existing command"""
 
-    bot.send_message(message.chat.id, 'Please choose between existing commands!')
+    bot.send_message(
+        message.chat.id, 'Please choose between existing commands!')
+
 
 if __name__ == '__main__':
-    bot.delete_webhook()
-    bot.polling(non_stop=True)
+    # app.run(debug=True)
+    bot.remove_webhook()
+    bot.set_webhook(url=URL+TOKEN)
